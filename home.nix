@@ -30,6 +30,10 @@
         };
       };
     };
+    thefuck = {
+      enable = true;
+      enableZshIntegration = true;
+    };
     zsh = {
       enable = true;
       enableVteIntegration = true;
