@@ -7,49 +7,73 @@
   home.homeDirectory = "/home/dstengele";
 
   home.stateVersion = "24.11";
-  home.packages = [
-    pkgs.jira-cli-go
-    pkgs.lazygit
-    pkgs._1password-cli
-    pkgs._1password-gui
+  home.packages = with pkgs; [
+    jira-cli-go
+    lazygit
+    _1password-cli
+    _1password-gui
+    firefox
+    jwt-cli
+    ffmpeg
+    yt-dlp
   ];
 
   programs = {
     home-manager.enable = true;
-  };
+    go = {
+      enable = true;
+      packages = {
+        "github.com/barnardb/cookies" = builtins.fetchGit { url = "https://github.com/barnardb/cookies.git"; rev = "964a94d2885feda7378a5faa275981f2664a0c3c";};
+      };
+    };
+    zsh = {
+      enable = true;
+      enableVteIntegration = true;
+      autocd = true;
+      history = {
+        append = true;
+        extended = true;
+      };
+      historySubstringSearch = {
+        enable = true;
+      };
+      syntaxHighlighting = {
+        enable = true;
+      };
+      zplug = {
+        enable = true;
+        plugins = [
+          {
+            name = "popstas/zsh-command-time";
+          }
+        ];
+      };
+      shellAliases = {
+        is_mac = "[[ $(uname) == \"Darwin\" ]]";
+        ll = "ls -lah";
+        l = "ls -lAh";
+        gs = "git status";
+        ga = "git add";
+        gb = "git branch";
+        gc = "git commit";
+        gd = "git diff";
+        gco = "git checkout";
+        du = "du -h";
+        duh = "du -h -d";
+        tmux = "tmux -u";
+        playspace = "play -nq -c1 synth whitenoise band -n 100 20 band -n 50 20 gain +30 fade h 1 86400 1";
+        playnetwork = "sudo tcpdump -n -w- | play --buffer 10000 -r 8000 -b 8 -c 1 -e signed-integer -t raw - band 2k vol 0.1";
+        dunnet = "emacs -batch -l dunnet";
+        ls = "ls -Gh --color=auto";
+        path = "echo $PATH | tr \":\" \"\\n\"";
+        csvview = "column -s \\; -t | vim -c 'set scrollopt=hor | set nowrap | 1split | windo set scrollbind' -";
 
-  # Home Manager is pretty good at managing dotfiles. The primary way to manage
-  # plain files is through 'home.file'.
-  home.file = {
-    # # Building this configuration will create a copy of 'dotfiles/screenrc' in
-    # # the Nix store. Activating the configuration will then make '~/.screenrc' a
-    # # symlink to the Nix store copy.
-    # ".screenrc".source = dotfiles/screenrc;
+        wincbpaste="/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe Get-Clipboard | sed 's/\\r$//' | head -c -1";
+        wincbcopy="/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -command '(\\$input | Out-String -Stream) -join \\\"\\`r\\`n\\\" | Set-Clipboard'";
 
-    # # You can also set the file content immediately.
-    # ".gradle/gradle.properties".text = ''
-    #   org.gradle.console=verbose
-    #   org.gradle.daemon.idletimeout=3600000
-    # '';
-  };
-
-  # Home Manager can also manage your environment variables through
-  # 'home.sessionVariables'. These will be explicitly sourced when using a
-  # shell provided by Home Manager. If you don't want to manage your shell
-  # through Home Manager then you have to manually source 'hm-session-vars.sh'
-  # located at either
-  #
-  #  ~/.nix-profile/etc/profile.d/hm-session-vars.sh
-  #
-  # or
-  #
-  #  ~/.local/state/nix/profiles/profile/etc/profile.d/hm-session-vars.sh
-  #
-  # or
-  #
-  #  /etc/profiles/per-user/dstengele/etc/profile.d/hm-session-vars.sh
-  #
-  home.sessionVariables = {
-    # EDITOR = "emacs";
+        disk_ids="ls -la /dev/disk/by-id/ | tail -n+4 | grep -v part | rev | sort | rev | awk '{ printf \"%s\\t%s\\t%s\\n\", $(NF-2), $(NF-1), $(NF) }' | column -t";
+      };
+      initContent = builtins.readFile ./shellInit.zsh;
+    };
   };
 }
