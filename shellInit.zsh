@@ -320,4 +320,25 @@ if command -v jira > /dev/null 2>&1; then
     source <(jira completion zsh)
 fi
 
+# Window Title
+case "$TERM" in (rxvt|rxvt-*|st|st-*|*xterm*|(dt|k|E)term)
+    local term_title () { print -n "\e]0;${(j: :q)@}\a" }
+    precmd () {
+      local DIR="$(print -P '[%c]%#')"
+      term_title "$DIR" "zsh"
+    }
+    preexec () {
+      local DIR="$(print -P '[%c]%#')"
+      local CMD="${(j:\n:)${(f)1}}"
+      term_title "$DIR" "$CMD"
+    }
+  ;;
+esac
+
+# Fix for WSL not propagating DISPLAY to dbus session
+if test -f /proc/sys/fs/binfmt_misc/WSLInterop-late; then
+    dbus-update-activation-environment --systemd DBUS_SESSION_BUS_ADDRESS DISPLAY XAUTHORITY
+fi
+
+
 source ./zshTheme.zsh
