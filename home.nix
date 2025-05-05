@@ -89,7 +89,7 @@
         TAPE = "/dev/st0m";
         AZURE_IDENTITY_DISABLE_CP1 = "1";
       };
-      initContent = builtins.readFile ./shellInit.zsh;
+      initContent = builtins.readFile ./shellInit.zsh + builtins.readFile ./zshTheme.zsh;
     };
   };
 }

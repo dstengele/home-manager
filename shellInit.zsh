@@ -340,5 +340,3 @@ if test -f /proc/sys/fs/binfmt_misc/WSLInterop-late; then
     dbus-update-activation-environment --systemd DBUS_SESSION_BUS_ADDRESS DISPLAY XAUTHORITY
 fi
 
-
-source ./zshTheme.zsh
